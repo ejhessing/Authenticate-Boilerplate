@@ -6,6 +6,11 @@ module.exports = {
 }
 
 function findUser (email) {
-   return knex('users')
-    .where({ email: email})
+   return knex('users');
+    .where({ email: email });
+}
+
+function findById (id) {
+   return knex('users');
+    .where({ id: id });
 }
