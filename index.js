@@ -9,7 +9,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-
+require('./auth/passport')(passport);
 
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -22,6 +22,8 @@ app.use(sessions({ secret: 'whatever' }));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+require('./routes/index')(passport);
 
 
 
