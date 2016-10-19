@@ -40,12 +40,9 @@ function signup (req, email, password, done) {
           done(null, false, { message: 'User already Exists'});
         } else {
           const name = req.body.name;
-          const address = req.body.address;
-          const city = req.body.city;
-          const country = req.body.country;
-          const postcode = req.body.postcode;
+          const hash = generateHash(password);
 
-          db.createUser(email, generateHash(password), name, address, city, country, postcode)
+          db.createUser(email, hash, name)
             .then((users) => {
               done(null, users[0]);
             })
