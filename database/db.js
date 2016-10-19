@@ -3,7 +3,8 @@ var knex = require('knex')(config)
 
 module.exports = {
   findUserByEmail: findUserByEmail,
-  findById: findById
+  findById: findById,
+  createUser: createUser
 }
 
 function findUserByEmail (email) {
@@ -14,4 +15,13 @@ function findUserByEmail (email) {
 function findById (id) {
    return knex('users');
     .where({ id: id });
+}
+
+function createUser (email, password, name) {
+   return knex('users');
+    .insert({
+      email: email,
+      password: password,
+      name: name
+    })
 }
