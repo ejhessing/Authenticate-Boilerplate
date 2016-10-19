@@ -28,6 +28,38 @@ function login (email, password, done) {
   }
 }
 
+function signup (req, email, password, done) {
+  if (email) {
+    email = email.toLowerCase();
+  }
+
+  process.nextTick(() => {
+    db.findUserByEmail(email)
+      .then((user) => {
+        if(user) {
+          done(null, false, { message: 'User already Exists'});
+        } else {
+          const name = req.body.name;
+          const address = req.body.address;
+          const city = req.body.city;
+          const country = req.body.country;
+          const postcode = req.body.postcode;
+
+          db.createUser(email, generateHash(password), name, address, city, country, postcode)
+            .then((users) => {
+              done(null, users[0]);
+            })
+            .catch((err) => {
+              done(err);
+            })
+        }
+      })
+      .catch((err) => {
+        done(err);
+      })
+
+  })
+}
 
 function generateHash(password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
