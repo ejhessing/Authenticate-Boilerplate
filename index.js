@@ -23,12 +23,8 @@ app.use(sessions({ secret: 'whatever' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-require('./routes/index')(passport);
+require('./routes/index')(app, passport);
 
 
-
-app.get("/", (req,res) => {
-  res.render('index')
-})
 
 app.listen(PORT, () => console.log('Listening on port: ' + PORT));
