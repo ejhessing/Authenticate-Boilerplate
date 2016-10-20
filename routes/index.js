@@ -1,3 +1,6 @@
+const db = require("../database/db")
+
+
 module.exports = (app, passport) => {
 
     app.get('/', (req, res) => {
@@ -30,6 +33,13 @@ module.exports = (app, passport) => {
 
     app.get('/secret', isLoggedIn, (req, res) => {
         res.render('secret');
+    })
+    
+    app.get('/users', (req, res) => {
+        db.getUsers()
+            .then((data) => {
+                res.json({data: data})
+            })
     })
 
 }

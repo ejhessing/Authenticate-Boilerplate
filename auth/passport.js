@@ -8,17 +8,24 @@ const config = require('./config')
 module.exports = function(passport) {
 
   passport.serializeUser((user, done) => {
-    done(null, user);
+    done(null, user[0]);
   });
 
-  passport.deserializeUser((id, done) => {
-    db.findById(id, (err, user) => {
-      done(err, user);
-    });
+  passport.deserializeUser((user, done) => {
+    db.findById(user.id)
+      .then((user) => {
+        done(null, user[0].id)
+      })
+      .catch((err) => {
+        done(err)
+      })
   });
 
 
-  passport.use('login', new LocalStrategy(config.login));
+  passport.use('login', new LocalStrategy({
+    passReqToCallback : true
+  }, config.login));
+  
   passport.use('signup', new LocalStrategy({
       usernameField : 'email',
       passwordField : 'password',
