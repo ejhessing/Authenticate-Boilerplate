@@ -30,8 +30,12 @@ GET: '/' --> Login
 POST: '/login' --> on success goes to secret page
 
 GET: '/signup' --> Sign up form
-Post: '/signup' --> on success goes to '/' to login
+POST: '/signup' --> on success goes to '/' to login
 
 JSON: '/users' --> API to get all the users in the database and confirm passwords are being hashed
 
 ```
+
+<h2>To add in the future</h2>
+
+I will be looking to add OAuth for Facebook, Twitter and Google in the near future
