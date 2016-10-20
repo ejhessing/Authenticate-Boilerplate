@@ -12,13 +12,13 @@ module.exports = function(passport) {
   });
 
   passport.deserializeUser((user, done) => {
-    db.findById(user.id)
-      .then((user) => {
-        done(null, user[0].id)
-      })
-      .catch((err) => {
-        done(err)
-      })
+  db.findById(user)
+    .then((user) => {
+      done(null, user[0].id)
+    })
+    .catch((err) => {
+      done(err)
+    })
   });
 
 

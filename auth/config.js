@@ -17,14 +17,12 @@ function login (req, email, password, done) {
         if (!user) {
           return done(null, false, req.flash('loginMessage', 'No user found.'));
         }
-        //if (!validPassword(password, user[0].password)) {
-        if(user[0].password !== password) {
+        if (!validPassword(password, user[0].password)) {
           return done(null, false, req.flash('loginMessage', 'Wrong password'))
         }
-        return done(null, user);
+        return done(null, [user[0].id]);
       })
       .catch((err) => {
-        console.log(err)
         return done(err)
       })
   })
@@ -41,12 +39,10 @@ function signup (req, email, password, done) {
           done(null, false, req.flash('loginMessage', 'No user found.'));
         } else {
           const name = req.body.name;
-          //const hash = generateHash(password);
-          const hash = password
-
+          const hash = generateHash(password);
+          
           db.createUser(email, hash, name)
             .then((user) => {
-              console.log("3 " + user)
               return done(null, user);
             })
             .catch((err) => {
