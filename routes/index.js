@@ -1,4 +1,4 @@
-module.exports = function(app, passport) {
+module.exports = (app, passport) => {
 
     app.get('/', (req, res) => {
         res.render('index');
@@ -27,3 +27,16 @@ module.exports = function(app, passport) {
         failureRedirect : '/signup',
         failureFlash : true
     }));
+
+    app.get('/secret', isLoggedIn, (req, res) => {
+        res.render('secret');
+    })
+
+}
+
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
+
+    res.redirect('/');
+}

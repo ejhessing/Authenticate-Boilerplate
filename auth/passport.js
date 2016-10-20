@@ -8,7 +8,7 @@ const config = require('./config')
 module.exports = function(passport) {
 
   passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user);
   });
 
   passport.deserializeUser((id, done) => {
@@ -18,7 +18,11 @@ module.exports = function(passport) {
   });
 
 
-  passport.use('login', new LocalStrategy(auth.login));
-  passport.use('signup', new LocalStrategy(auth.signup));
+  passport.use('login', new LocalStrategy(config.login));
+  passport.use('signup', new LocalStrategy({
+      usernameField : 'email',
+      passwordField : 'password',
+      passReqToCallback : true
+  },config.signup));
 
 }

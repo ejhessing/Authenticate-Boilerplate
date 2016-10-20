@@ -6,7 +6,7 @@ module.exports = {
   signup: signup
 }
 
-function login (email, password, done) {
+function login (req, email, password, done) {
   if (email)
       email = email.toLowerCase();
 
@@ -14,37 +14,38 @@ function login (email, password, done) {
   process.nextTick(() => {
     db.findUserByEmail(email)
       .then((user) => {
-        if(err) {
-          return done(err);
-        }
-        if (!user) {}
-          return done(null, false, { message: 'No user found' });
+        if (!user) {
+          return done(null, false, req.flash('loginMessage', 'No user found.'));
         }
         if (!validPassword(password, user[0].password)) {
-          return done(null, false, { message: 'Oops! Wrong Password'})
+          return done(null, false, req.flash('loginMessage', 'Wrong password'))
         }
         return done(null, user);
       })
-  }
+      .catch((err) => {
+        console.log(err)
+        return done(err)
+      })
+  })
 }
 
 function signup (req, email, password, done) {
   if (email) {
     email = email.toLowerCase();
   }
-
   process.nextTick(() => {
     db.findUserByEmail(email)
       .then((user) => {
-        if(user) {
-          done(null, false, { message: 'User already Exists'});
+        if(user && user[0]) {
+          done(null, false, req.flash('loginMessage', 'No user found.'));
         } else {
           const name = req.body.name;
           const hash = generateHash(password);
 
           db.createUser(email, hash, name)
-            .then((users) => {
-              done(null, users[0]);
+            .then((user) => {
+              console.log("3" + user)
+              done(null, use1r);
             })
             .catch((err) => {
               done(err);
@@ -55,7 +56,7 @@ function signup (req, email, password, done) {
         done(err);
       })
 
-  })
+   })
 }
 
 function generateHash(password) {

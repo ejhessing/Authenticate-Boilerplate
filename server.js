@@ -4,6 +4,7 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const sessions = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
+var flash    = require('connect-flash');
 
 
 const PORT = process.env.PORT || 3000;
@@ -22,6 +23,7 @@ app.use(sessions({ secret: 'whatever' }));
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
 
 require('./routes/index')(app, passport);
 

@@ -8,20 +8,21 @@ module.exports = {
 }
 
 function findUserByEmail (email) {
-   return knex('users');
+   return knex('users')
     .where({ email: email });
 }
 
 function findById (id) {
-   return knex('users');
+   return knex('users')
     .where({ id: id });
 }
 
 function createUser (email, password, name) {
-   return knex('users');
+   return knex('users')
     .insert({
       email: email,
       password: password,
       name: name
     })
+    .returning('id')
 }
