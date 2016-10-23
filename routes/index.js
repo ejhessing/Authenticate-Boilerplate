@@ -1,4 +1,4 @@
-const db = require("../database/db")
+const db = require("../database/db");
 
 
 module.exports = (app, passport) => {
@@ -23,6 +23,10 @@ module.exports = (app, passport) => {
 
     app.get('/signup', (req, res) => {
         res.render('signup');
+    });
+    
+    app.get('/forgot', (req, res) => {
+        res.render('forgot');
     });
 
     app.post('/signup', passport.authenticate('signup', {
