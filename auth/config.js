@@ -1,5 +1,5 @@
 const db = require('../database/db');
-var bcrypt   = require('bcrypt-nodejs');
+const bcrypt   = require('bcrypt-nodejs');
 
 module.exports = {
   login: login,

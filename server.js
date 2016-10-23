@@ -4,7 +4,7 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const sessions = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
-var flash    = require('connect-flash');
+const flash    = require('connect-flash');
 
 
 const PORT = process.env.PORT || 3000;
@@ -19,7 +19,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.set('views', __dirname + "/views");
 
-app.use(sessions({ secret: 'whatever' }));
+app.use(sessions({
+  secret: 'reallySafeKey',
+  resave: true,
+  saveUninitialized: true
+}))
 
 app.use(passport.initialize());
 app.use(passport.session());
