@@ -55,46 +55,38 @@ module.exports = (app, passport) => {
         });
     });
     
-    app.get("/sendEmail", (req, res, next) => {
-      var token = req.session.token;
-      var email = req.session.email;
+    app.get("/sendEmail", (req, res) => {
+      const token = req.session.token;
+      const emailAddress = req.session.email;
       
-        // var options = {
-        //     auth: {
-        //         api_user: process.env.SGuser,
-        //         api_key: process.env.SGpass
-        //     }
-        // }
-        var options = {
-    auth: {
-        api_key: process.env.SGApi
-    }
-}
+      const options = {
+        auth: {
+          api_key: process.env.SGApi
+        }
+      }
           
-          var mailer = nodemailer.createTransport(sgTransport(options));
+      const mailer = nodemailer.createTransport(sgTransport(options));
           
-        var emailConfig = {
-          to: email,
-          from: 'passwordreset@demo.com',
-          subject: 'Node.js Password Reset',
-          text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-            'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-            'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-            'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-        };
+      const email = {
+        to: emailAddress,
+        from: 'passwordreset@example.com',
+        subject: 'Node.js Password Reset',
+        text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+          'http://' + req.headers.host + '/resetPassword/' + token + '\n\n' +
+          'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+      };
         
-      mailer.sendMail(emailConfig, function(err, res) {
+      mailer.sendMail(email, function(err, res) {
           if (err) { 
               console.log(err) 
           }
           console.log(res);
        });
     
-
-
     })
     
-    
+
     
 
     app.get('/secret', isLoggedIn, (req, res) => {
