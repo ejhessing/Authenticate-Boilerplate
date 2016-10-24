@@ -1,10 +1,9 @@
 const config = require('../knexfile.js')[ process.env.NODE_ENV || 'development' ];
 const knex = require('knex')(config);
-
-
+const auth = require('../auth/config')
 
 module.exports = {
-  findUserByEmail,
+  findUserByEmail: findUserByEmail,
   findById,
   createUser,
   getUsersDB,
@@ -13,8 +12,10 @@ module.exports = {
   resetPassword
 }
 
+
 function findUserByEmail (email) {
-   return knex('users')
+  console.log(email)
+  return knex('users')
     .where({ email: email });
 }
 
@@ -34,6 +35,7 @@ function createUser (email, password, name) {
 }
 
 function addToken (token, email) {
+  const expiredAt = Date.now() + 3600000
    findUserByEmail(email)
     .then((user) => {
        if(!user) {
@@ -42,16 +44,37 @@ function addToken (token, email) {
        } 
        return knex('reset')
           .insert({
-             user_id: user[0].id,
-             token: token,
-             expiredAt: Date.now() + 3600000
+            user_id: user[0].id,
+            token: token,
+            expiredAt: expiredAt
           });
     });
 }
 
-function resetPassword (token) {
-  const time = Date.now()
-  
+function resetPassword (email, password, token) {
+  const time = Date.now();
+  const hash = auth.generateHash(password);
+  return knex('reset')
+    .where({ token: token })
+    .then((data) => {
+      if(data[0].expiredAt < time) {
+        console.log("Sorry this link has now expired");
+        return;
+      }
+      updatePassword(email, hash)
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+function updatePassword (email, hash) {
+  return knex('users')
+    .where({ email: email })
+    .update({ password: hash})
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 function getUsersDB () {
@@ -61,3 +84,4 @@ function getUsersDB () {
 function getResetDB () {
    return knex('reset');
 }
+

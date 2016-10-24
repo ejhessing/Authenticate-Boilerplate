@@ -43,22 +43,28 @@ module.exports = (app, passport) => {
         crypto.randomBytes(20, function(err, buf) {
           if(err) console.log(err)
           var token = buf.toString('hex');
-            db.addToken(token, email);
-            sendEmail.resetLink(req.headers.host, email, token);
+          
+          db.addToken(token, email);
+          sendEmail.resetLink(req.headers.host, email, token);
+          res.redirect('/')
         });
     });
     
     
     app.get("/resetPassword/:token", (req, res) => {
-      res.render('resetPassword');
+      const token = req.params.token
+      res.render('resetPassword', { token: token } );
     });
     
-    app.post("/resetPassword/:token", (req, res) => {
-        const token = req.query.token;
-        db.resetPassword(token)
-          .then(() => {
-            
-          })
+    app.post("/resetPassword", (req, res) => {
+      const token = req.body.token;
+      const password = req.body.password;
+      const email = req.body.email;
+      db.resetPassword(email, password, token)
+        .then((id) => {
+          sendEmail.passwordChanged(email);
+          res.redirect('/');
+        })
     });
     
 
@@ -67,17 +73,17 @@ module.exports = (app, passport) => {
     })
     
     app.get('/users', (req, res) => {
-        db.getUsersDB()
-            .then((data) => {
-                res.json({data: data})
-            })
+      db.getUsersDB()
+        .then((data) => {
+          res.json({data: data})
+        })
     })
     
     app.get('/reset', (req, res) => {
-        db.getResetDB()
-            .then((data) => {
-                res.json({data: data})
-            })
+      db.getResetDB()
+        .then((data) => {
+          res.json({data: data})
+        })
     })
 
 }

@@ -2,14 +2,14 @@ const db = require('../database/db');
 const bcrypt   = require('bcrypt-nodejs');
 
 module.exports = {
-  login: login,
-  signup: signup
+  login,
+  signup,
+  generateHash
 }
 
 function login (req, email, password, done) {
   if (email)
       email = email.toLowerCase();
-
 
   process.nextTick(() => {
     db.findUserByEmail(email)
@@ -57,9 +57,11 @@ function signup (req, email, password, done) {
    })
 }
 
+
+
 function generateHash(password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
-};
+}
 
 
 function validPassword(password, hash) {

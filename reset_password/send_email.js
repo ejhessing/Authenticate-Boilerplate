@@ -3,15 +3,16 @@ const sgTransport = require('nodemailer-sendgrid-transport');
 require('dotenv').config();
 
 module.exports = {
-   resetLink
-}
+   resetLink,
+   passwordChanged
+};
 
 function resetLink (host, emailAddress, token) {
    const options = {
       auth: {
         api_key: process.env.SGApi
       }
-   }
+   };
           
    const mailer = nodemailer.createTransport(sgTransport(options));
        
@@ -28,7 +29,32 @@ function resetLink (host, emailAddress, token) {
      
    mailer.sendMail(email, (err, res) => {
       if (err) { 
-        console.log(err) 
+        console.log(err);
+      }
+      console.log(res);
+   });
+}
+
+function passwordChanged (emailAddress) {
+   const options = {
+      auth: {
+        api_key: process.env.SGApi
+      }
+   };
+          
+   const mailer = nodemailer.createTransport(sgTransport(options));
+       
+   const email = {
+     to: emailAddress,
+     from: 'passwordreset@example.com',
+     subject: 'Node.js Password Reset',
+     text: 'Hello,\n\n' +
+          'This is a confirmation that the password for your account ' + email + ' has just been changed.\n'
+   };
+     
+   mailer.sendMail(email, (err, res) => {
+      if (err) { 
+        console.log(err);
       }
       console.log(res);
    });
