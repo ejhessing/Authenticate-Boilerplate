@@ -1,11 +1,15 @@
-var config = require('../knexfile.js')[ process.env.NODE_ENV || 'development' ]
-var knex = require('knex')(config)
+const config = require('../knexfile.js')[ process.env.NODE_ENV || 'development' ];
+const knex = require('knex')(config);
+
+
 
 module.exports = {
-  findUserByEmail: findUserByEmail,
-  findById: findById,
-  createUser: createUser,
-  getUsers: getUsers
+  findUserByEmail,
+  findById,
+  createUser,
+  getUsersDB,
+  getResetDB,
+  resetPassword
 }
 
 function findUserByEmail (email) {
@@ -25,10 +29,32 @@ function createUser (email, password, name) {
       password: password,
       name: name
     })
-    .returning('id')
+    .returning('id');
+}
+
+function resetPassword (token, email) {
+   findUserByEmail(email)
+      .then((user) => {
+         if(!user) {
+            console.log('error', "No user with that email address exists")
+            return ('error')
+         } 
+         return knex('reset')
+            .insert({
+               user_id: user[0].id,
+               token: token,
+               expiredAt: Date.now() + 3600000
+            })
+      })
+      
+
 }
 
 
-function getUsers () {
-   return knex('users')
+function getUsersDB () {
+   return knex('users');
+}
+
+function getResetDB () {
+   return knex('reset');
 }
