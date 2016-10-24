@@ -9,6 +9,7 @@ module.exports = {
   createUser,
   getUsersDB,
   getResetDB,
+  addToken,
   resetPassword
 }
 
@@ -32,27 +33,29 @@ function createUser (email, password, name) {
     .returning('id');
 }
 
-function resetPassword (token, email) {
+function addToken (token, email) {
    findUserByEmail(email)
-      .then((user) => {
-         if(!user) {
-            console.log('error', "No user with that email address exists")
-            return ('error')
-         } 
-         return knex('reset')
-            .insert({
-               user_id: user[0].id,
-               token: token,
-               expiredAt: Date.now() + 3600000
-            })
-      })
-      
-
+    .then((user) => {
+       if(!user) {
+          console.log('error', "No user with that email address exists");
+          return ('error');
+       } 
+       return knex('reset')
+          .insert({
+             user_id: user[0].id,
+             token: token,
+             expiredAt: Date.now() + 3600000
+          });
+    });
 }
 
+function resetPassword (token) {
+  const time = Date.now()
+  
+}
 
 function getUsersDB () {
-   return knex('users');
+  return knex('users');
 }
 
 function getResetDB () {

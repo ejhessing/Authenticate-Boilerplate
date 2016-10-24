@@ -1,9 +1,7 @@
 const db = require("../database/db");
 const crypto = require('crypto');
 const async = require('async');
-const nodemailer = require('nodemailer');
-var sgTransport = require('nodemailer-sendgrid-transport');
-require('dotenv').config()
+const sendEmail = require('../reset_password/send_email');
 
 
 module.exports = (app, passport) => {
@@ -45,48 +43,23 @@ module.exports = (app, passport) => {
         crypto.randomBytes(20, function(err, buf) {
           if(err) console.log(err)
           var token = buf.toString('hex');
-            db.resetPassword(token, email)
-            db.findUserByEmail(email)
-              .then((data) => {
-                req.session.token = token;
-                req.session.email = email;
-                res.redirect("sendEmail")
-              })
+            db.addToken(token, email);
+            sendEmail.resetLink(req.headers.host, email, token);
         });
     });
     
-    app.get("/sendEmail", (req, res) => {
-      const token = req.session.token;
-      const emailAddress = req.session.email;
-      
-      const options = {
-        auth: {
-          api_key: process.env.SGApi
-        }
-      }
-          
-      const mailer = nodemailer.createTransport(sgTransport(options));
-          
-      const email = {
-        to: emailAddress,
-        from: 'passwordreset@example.com',
-        subject: 'Node.js Password Reset',
-        text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-          'http://' + req.headers.host + '/resetPassword/' + token + '\n\n' +
-          'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-      };
-        
-      mailer.sendMail(email, function(err, res) {
-          if (err) { 
-              console.log(err) 
-          }
-          console.log(res);
-       });
     
-    })
+    app.get("/resetPassword/:token", (req, res) => {
+      res.render('resetPassword');
+    });
     
-
+    app.post("/resetPassword/:token", (req, res) => {
+        const token = req.query.token;
+        db.resetPassword(token)
+          .then(() => {
+            
+          })
+    });
     
 
     app.get('/secret', isLoggedIn, (req, res) => {
