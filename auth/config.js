@@ -3,8 +3,7 @@ const bcrypt   = require('bcrypt-nodejs');
 
 module.exports = {
   login,
-  signup,
-  generateHash
+  signup
 }
 
 function login (req, email, password, done) {

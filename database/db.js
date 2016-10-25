@@ -1,9 +1,9 @@
 const config = require('../knexfile.js')[ process.env.NODE_ENV || 'development' ];
 const knex = require('knex')(config);
-const auth = require('../auth/config')
+const bcrypt   = require('bcrypt-nodejs');
 
 module.exports = {
-  findUserByEmail: findUserByEmail,
+  findUserByEmail,
   findById,
   createUser,
   getUsersDB,
@@ -14,7 +14,6 @@ module.exports = {
 
 
 function findUserByEmail (email) {
-  console.log(email)
   return knex('users')
     .where({ email: email });
 }
@@ -53,7 +52,7 @@ function addToken (token, email) {
 
 function resetPassword (email, password, token) {
   const time = Date.now();
-  const hash = auth.generateHash(password);
+  const hash = generateHash(password);
   return knex('reset')
     .where({ token: token })
     .then((data) => {
@@ -85,3 +84,6 @@ function getResetDB () {
    return knex('reset');
 }
 
+function generateHash(password) {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
+}

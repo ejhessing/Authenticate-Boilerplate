@@ -49,7 +49,7 @@ function passwordChanged (emailAddress) {
      from: 'passwordreset@example.com',
      subject: 'Node.js Password Reset',
      text: 'Hello,\n\n' +
-          'This is a confirmation that the password for your account ' + email + ' has just been changed.\n'
+          'This is a confirmation that the password for your account ' + emailAddress + ' has just been changed.\n'
    };
      
    mailer.sendMail(email, (err, res) => {
