@@ -10,7 +10,7 @@ module.exports = {
   getResetDB,
   addToken,
   resetPassword
-}
+};
 
 
 function findUserByEmail (email) {
@@ -34,7 +34,8 @@ function createUser (email, password, name) {
 }
 
 function addToken (token, email) {
-  const expiredAt = Date.now() + 3600000
+  const oneHour = 3600000;
+  const expiredAt = Date.now() + oneHour;
    findUserByEmail(email)
     .then((user) => {
        if(!user) {
@@ -60,7 +61,7 @@ function resetPassword (email, password, token) {
         console.log("Sorry this link has now expired");
         return;
       }
-      updatePassword(email, hash)
+      updatePassword(email, hash);
     })
     .catch((err) => {
       console.log(err);
